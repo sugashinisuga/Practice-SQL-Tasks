@@ -150,3 +150,41 @@ DELIMITER ;
 
 -- Call example:
 CALL GetStudentCourses(1);
+-- 23. Trigger: Auto Active Status
+DELIMITER //
+CREATE TRIGGER trg_AutoActive
+BEFORE INSERT ON Enrollments
+FOR EACH ROW
+BEGIN
+    SET NEW.Status = 'Active';
+END //
+DELIMITER ;
+
+-- 24. Trigger: Prevent negative payment
+DELIMITER //
+CREATE TRIGGER trg_CheckPayment
+BEFORE INSERT ON Payments
+FOR EACH ROW
+BEGIN
+    IF NEW.Amount < 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Payment amount cannot be negative';
+    END IF;
+END //
+DELIMITER ;
+
+-- Trigger to archive student on delete
+DELIMITER //
+CREATE TRIGGER trg_ArchiveStudent
+BEFORE DELETE ON Students
+FOR EACH ROW
+BEGIN
+    INSERT INTO Archive_Students (StudentID, Name, Email, City, JoinDate)
+    VALUES (OLD.StudentID, OLD.Name, OLD.Email, OLD.City, OLD.JoinDate);
+END //
+DELIMITER ;
+
+-- When student deletes account
+DELETE FROM Enrollments WHERE StudentID = 1;
+DELETE FROM Payments WHERE StudentID = 1;
+DELETE FROM Students WHERE StudentID = 1;
