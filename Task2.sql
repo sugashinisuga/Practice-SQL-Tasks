@@ -5,8 +5,7 @@ CREATE TABLE shop (
     veg_id INT PRIMARY KEY,
     veg_name VARCHAR(30),
     price DECIMAL(10,2),
-    discount DECIMAL(10,2)  -- discount in currency (e.g., Rs.)
-);
+    discount DECIMAL(10,2);
 
 
 INSERT INTO shop VALUES
